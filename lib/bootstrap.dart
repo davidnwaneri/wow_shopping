@@ -17,10 +17,8 @@ class AppProviderObserver extends ProviderObserver {
   @override
   void didUpdateProvider(provider, previousValue, newValue, container) {
     super.didUpdateProvider(provider, previousValue, newValue, container);
-    // debugPrint(
-    //   '''didUpdateProvider: ${provider.name ?? provider.runtimeType}'''
-    //   '''\npreviousValue: $previousValue'''
-    //   '''\nnewValue: $newValue'''
-    // );
+    debugPrint('''didUpdateProvider: ${provider.name ?? provider.runtimeType}'''
+        '''\npreviousValue: $previousValue'''
+        '''\nnewValue: $newValue''');
   }
 }
