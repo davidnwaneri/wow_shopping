@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wow_shopping/features/connection_monitor/connection_monitor.dart';
+import 'package:wow_shopping/features/main/bloc/nav_index_cubit.dart';
 import 'package:wow_shopping/features/main/widgets/bottom_nav_bar.dart';
 
 export 'package:wow_shopping/models/nav_item.dart';
@@ -32,37 +34,39 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
-  NavItem _selected = NavItem.home;
-
   void gotoSection(NavItem item) {
-    setState(() => _selected = item);
+    context.read<NavIndexCubit>().setIndex(item);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: Material(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ConnectionMonitor(
-                child: IndexedStack(
-                  index: _selected.index,
-                  children: [
-                    for (final item in NavItem.values) //
-                      item.builder(),
-                  ],
+    return BlocBuilder<NavIndexCubit, NavItem>(
+      builder: (context, state) {
+        return SizedBox.expand(
+          child: Material(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: ConnectionMonitor(
+                    child: IndexedStack(
+                      index: state.index,
+                      children: [
+                        for (final item in NavItem.values) //
+                          item.builder(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                BottomNavBar(
+                  onNavItemPressed: gotoSection,
+                  selected: state,
+                ),
+              ],
             ),
-            BottomNavBar(
-              onNavItemPressed: gotoSection,
-              selected: _selected,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
