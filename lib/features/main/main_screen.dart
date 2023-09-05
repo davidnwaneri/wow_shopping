@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wow_shopping/features/connection_monitor/connection_monitor.dart';
 import 'package:wow_shopping/features/main/widgets/bottom_nav_bar.dart';
 
 export 'package:wow_shopping/models/nav_item.dart';
 
-@immutable
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen._();
 
   static Route<void> route() {
@@ -28,14 +28,12 @@ class MainScreen extends StatefulWidget {
   }
 
   @override
-  State<MainScreen> createState() => MainScreenState();
+  ConsumerState createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen> {
-  NavItem _selected = NavItem.home;
-
+class MainScreenState extends ConsumerState<MainScreen> {
   void gotoSection(NavItem item) {
-    setState(() => _selected = item);
+    ref.read(counterProvider.notifier).update((_) => item);
   }
 
   @override
@@ -48,7 +46,7 @@ class MainScreenState extends State<MainScreen> {
             Expanded(
               child: ConnectionMonitor(
                 child: IndexedStack(
-                  index: _selected.index,
+                  index: ref.watch(counterProvider).index,
                   children: [
                     for (final item in NavItem.values) //
                       item.builder(),
@@ -56,10 +54,7 @@ class MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
-            BottomNavBar(
-              onNavItemPressed: gotoSection,
-              selected: _selected,
-            ),
+            const BottomNavBar(),
           ],
         ),
       ),

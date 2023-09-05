@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wow_shopping/app/theme.dart';
 import 'package:wow_shopping/models/nav_item.dart';
 import 'package:wow_shopping/widgets/app_icon.dart';
@@ -7,18 +8,18 @@ import 'package:wow_shopping/widgets/common.dart';
 export 'package:wow_shopping/models/nav_item.dart';
 
 @immutable
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends ConsumerWidget {
   const BottomNavBar({
     super.key,
-    required this.onNavItemPressed,
-    required this.selected,
+    // required this.onNavItemPressed,
+    // required this.selected,
   });
 
-  final ValueChanged<NavItem> onNavItemPressed;
-  final NavItem selected;
+  // final ValueChanged<NavItem> onNavItemPressed;
+  // final NavItem selected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appTheme = AppTheme.of(context);
     final viewPadding = MediaQuery.viewPaddingOf(context);
     return Material(
@@ -32,9 +33,9 @@ class BottomNavBar extends StatelessWidget {
               for (final item in NavItem.values) //
                 Expanded(
                   child: BottomNavButton(
-                    onPressed: onNavItemPressed,
+                    onPressed: () => ref.read(counterProvider.notifier).update((_) => item),
                     item: item,
-                    selected: selected,
+                    selected: ref.watch(counterProvider),
                   ),
                 ),
             ],
@@ -54,14 +55,16 @@ class BottomNavButton extends StatelessWidget {
     required this.selected,
   });
 
-  final ValueChanged<NavItem> onPressed;
+  final VoidCallback onPressed;
+
+  // final ValueChanged<NavItem> onPressed;
   final NavItem item;
   final NavItem selected;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => onPressed(item),
+      onTap: onPressed,
       child: Padding(
         padding: verticalPadding12 + bottomPadding4,
         child: AppIcon(
@@ -72,3 +75,5 @@ class BottomNavButton extends StatelessWidget {
     );
   }
 }
+
+final counterProvider = StateProvider<NavItem>((ref) => NavItem.home);
